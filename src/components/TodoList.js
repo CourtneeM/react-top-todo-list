@@ -14,14 +14,15 @@ class TodoList extends Component {
     }
 
     this.submitEditTodo = this.submitEditTodo.bind(this);
+    this.deleteTodo = this.deleteTodo.bind(this);
   }
 
   displayTodos() {
     return (
       <div>
         {
-          Object.values(this.props.selectedProject)[0].map(todo => {
-            return <Todo todo={todo} submitEditTodo={this.submitEditTodo}/>
+          this.props.selectedProject.map(todo => {
+            return <Todo todo={todo} submitEditTodo={this.submitEditTodo} deleteTodo={this.deleteTodo}/>
           })
         }
       </div>
@@ -50,9 +51,14 @@ class TodoList extends Component {
     this.props.editTodo(updatedTodo, index);
   }
 
+  deleteTodo(index) {
+    this.props.deleteTodo(index);
+  }
+
   render() {
     return (
       <div>
+        <h2>{this.props.selectedProjectName}</h2>
         <div className="new-todo-form">
           <input type="text" placeholder="Title" value={this.state.title} onChange={e => this.updateInput('title', e.target.value)}/>
           <input type="text" placeholder="Description" value={this.state.description} onChange={e => this.updateInput('description', e.target.value)} />

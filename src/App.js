@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Projects from './components/Projects';
+import ProjectsList from './components/ProjectsList';
 
 class App extends Component {
   constructor(props) {
@@ -9,7 +9,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Projects />
+        <ProjectsList />
       </div>
     );
   }

@@ -49,6 +49,15 @@ class Todo extends Component {
     });
   }
 
+  deleteTodo(e) {
+    const index = [...e.target.parentElement.parentElement.children].indexOf(e.target.parentElement);
+    this.props.deleteTodo(index);
+
+    this.setState({
+      editMode: false,
+    });
+  }
+
   displayEditTodo() {
     return (
       <div>
@@ -58,7 +67,7 @@ class Todo extends Component {
         <input type="text" value={this.state.priority} onChange={e => this.updateInput('priority', e.target.value)} />
         <input type="text" value={this.state.notes} onChange={e => this.updateInput('notes', e.target.value)} />
         <button onClick={e => this.submitEditTodo(e)}>Submit</button>
-        <button>Delete</button>
+        <button onClick={e => this.deleteTodo(e)}>Delete</button>
       </div>
     );
   }
