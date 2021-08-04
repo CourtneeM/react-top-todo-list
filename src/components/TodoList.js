@@ -11,10 +11,8 @@ class TodoList extends Component {
       dueDate: '',
       priority: '',
       notes: '',
-      editMode: false,
     }
 
-    this.editTodo = this.editTodo.bind(this);
     this.submitEditTodo = this.submitEditTodo.bind(this);
   }
 
@@ -23,7 +21,7 @@ class TodoList extends Component {
       <div>
         {
           Object.values(this.props.selectedProject)[0].map(todo => {
-            return <Todo todo={todo} editTodo={this.editTodo} editMode={this.state.editMode} submitEditTodo={this.submitEditTodo}/>
+            return <Todo todo={todo} submitEditTodo={this.submitEditTodo}/>
           })
         }
       </div>
@@ -48,16 +46,8 @@ class TodoList extends Component {
     });
   }
 
-  editTodo() {
-    this.setState({
-      editMode: true,
-    })
-  }
-
   submitEditTodo(updatedTodo, index) {
-    this.setState({
-      editMode: false,
-    }, () => this.props.editTodo(updatedTodo, index));
+    this.props.editTodo(updatedTodo, index);
   }
 
   render() {
@@ -66,7 +56,7 @@ class TodoList extends Component {
         <div className="new-todo-form">
           <input type="text" placeholder="Title" value={this.state.title} onChange={e => this.updateInput('title', e.target.value)}/>
           <input type="text" placeholder="Description" value={this.state.description} onChange={e => this.updateInput('description', e.target.value)} />
-          <input type="text" placeholder="Due Date" value={this.state.dueDate} onChange={e => this.updateInput('due date', e.target.value)} />
+          <input type="text" placeholder="Due Date" value={this.state.dueDate} onChange={e => this.updateInput('dueDate', e.target.value)} />
           <input type="text" placeholder="Priority" value={this.state.priority} onChange={e => this.updateInput('priority', e.target.value)} />
           <input type="text" placeholder="Notes" value={this.state.notes} onChange={e => this.updateInput('notes', e.target.value)} />
           <button onClick={() => this.addTodo()}>Add Todo</button>
