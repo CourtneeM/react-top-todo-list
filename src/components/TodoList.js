@@ -21,8 +21,8 @@ class TodoList extends Component {
     return (
       <div>
         {
-          this.props.selectedProject.map(todo => {
-            return <Todo todo={todo} submitEditTodo={this.submitEditTodo} deleteTodo={this.deleteTodo}/>
+          this.props.selectedProject.map((todo, i) => {
+            return <Todo key={i} todo={todo} submitEditTodo={this.submitEditTodo} deleteTodo={this.deleteTodo}/>
           })
         }
       </div>
@@ -78,7 +78,7 @@ class TodoList extends Component {
           <p></p>
           <p></p>
         </div>
-        {this.displayTodos()}
+        {this.props.selectedProject ? this.displayTodos() : null}
       </div>
     );
   }

@@ -8,25 +8,28 @@ class ProjectsList extends Component {
 
     this.state = {
       newProjectInput: '',
-      projects: {'Default Project': [{title: 'ayy', description: 'ohhh', dueDate: 'tomorrow', priority: 1, notes: 'do it now', completed: false}]},
+      projects: [{'Default Project': [{title: 'ayy', description: 'ohhh', dueDate: 'tomorrow', priority: 1, notes: 'do it now', completed: false}]}],
       selectedProjectName: 'Default Project',
     }
 
     this.selectProject = this.selectProject.bind(this);
     this.submitEditProjectName = this.submitEditProjectName.bind(this);
+    this.deleteProject = this.deleteProject.bind(this);
     this.addTodo = this.addTodo.bind(this);
     this.editTodo = this.editTodo.bind(this);
     this.deleteTodo = this.deleteTodo.bind(this);
   }
 
   addProject() {
-    const projectsCopy = Object.assign({}, this.state.projects);
-    projectsCopy[this.state.newProjectInput] = [];
+    const projectsCopy = [...this.state.projects];
+    const newProjectName = this.state.newProjectInput;
+    projectsCopy.push({[newProjectName]: []});
 
-    this.setState({
+    this.setState(prevState => ({
       newProjectInput: '',
-      projects: projectsCopy
-    });
+      projects: projectsCopy,
+      selectedProjectName: projectsCopy.length === 1 ? newProjectName : prevState.selectedProjectName
+    }));
   }
 
   selectProject(projectName) {
@@ -39,36 +42,47 @@ class ProjectsList extends Component {
     return (
       <div>
         {
-          Object.keys(this.state.projects).map((projectName, i) => {
+          this.state.projects.map((project, i) => {
             return <Project
-                     name={projectName}
-                     submitEditProjectName={this.submitEditProjectName}
+                     key={i}
+                     name={Object.keys(project)[0]}
                      selectProject={this.selectProject}
-                    />
+                     submitEditProjectName={this.submitEditProjectName}
+                     deleteProject={this.deleteProject}
+                   />
           })
         }
       </div>
     );
   }
 
-  submitEditProjectName(newName, oldName) {
-    const projectsCopy = Object.assign({}, this.state.projects);
-    const oldProjectValues = projectsCopy[oldName];
+  submitEditProjectName(newName, index) {
+    const projectsCopy = [...this.state.projects];
+    const oldProject = projectsCopy[index];
     
-    projectsCopy[newName] = oldProjectValues;
-    delete projectsCopy[oldName];
+    projectsCopy.splice(index, 1, {[newName]: Object.values(oldProject)});
 
     this.setState({
       projects: projectsCopy,
-      selectedProjectName: this.state.selectedProjectName === oldName ? newName : this.state.selectedProjectName
+      selectedProjectName: this.state.selectedProjectName === Object.keys(oldProject)[0] ? newName : this.state.selectedProjectName
+    });
+  }
+
+  deleteProject(projectName, index) {
+    const projectsCopy = [...this.state.projects];
+    projectsCopy.splice(index, 1);
+
+    this.setState({
+      projects: projectsCopy,
+      selectedProjectName: this.state.selectedProjectName === projectName ? projectsCopy[0] : this.state.selectedProjectName
     });
   }
 
   addTodo(newTodo) {
-    const projectsCopy = Object.assign({}, this.state.projects);
-    const updatedProjectValues = this.state.projects[this.state.selectedProjectName];
-    updatedProjectValues.push(newTodo);
-    projectsCopy[this.state.selectedProjectName] = updatedProjectValues
+    const projectsCopy = [...this.state.projects];
+    const projectIndex = projectsCopy.indexOf(projectsCopy.filter(project => Object.keys(project)[0] === this.state.selectedProjectName)[0]);
+    
+    projectsCopy[projectIndex][this.state.selectedProjectName].push(newTodo);
 
     this.setState({
       projects: projectsCopy
@@ -76,10 +90,10 @@ class ProjectsList extends Component {
   }
 
   editTodo(updatedTodo, index) {
-    const projectsCopy = Object.assign({}, this.state.projects);
-    const updatedProjectValues = this.state.projects[this.state.selectedProjectName];
-    updatedProjectValues.splice(index, 1, updatedTodo);
-    projectsCopy[this.state.selectedProjectName] = updatedProjectValues;
+    const projectsCopy = [...this.state.projects];
+    const projectIndex = projectsCopy.indexOf(projectsCopy.filter(project => Object.keys(project)[0] === this.state.selectedProjectName)[0]);
+
+    projectsCopy[projectIndex][this.state.selectedProjectName].splice(index, 1, updatedTodo);
 
     this.setState({
       projects: projectsCopy
@@ -87,10 +101,10 @@ class ProjectsList extends Component {
   }
 
   deleteTodo(index) {
-    const projectsCopy = Object.assign({}, this.state.projects);
-    const updatedProjectValues = this.state.projects[this.state.selectedProjectName];
-    updatedProjectValues.splice(index, 1);
-    projectsCopy[this.state.selectedProjectName] = updatedProjectValues;
+    const projectsCopy = [...this.state.projects];
+    const projectIndex = projectsCopy.indexOf(projectsCopy.filter(project => Object.keys(project)[0] === this.state.selectedProjectName)[0]);
+
+    projectsCopy[projectIndex][this.state.selectedProjectName].splice(index, 1);
 
     this.setState({
       projects: projectsCopy,
@@ -112,7 +126,7 @@ class ProjectsList extends Component {
 
         <TodoList
           selectedProjectName={this.state.selectedProjectName}
-          selectedProject={this.state.projects[this.state.selectedProjectName]}
+          selectedProject={Object.values(this.state.projects.filter(project => Object.keys(project)[0] === this.state.selectedProjectName)[0])[0]}
           addTodo={this.addTodo}
           editTodo={this.editTodo}
           deleteTodo={this.deleteTodo}

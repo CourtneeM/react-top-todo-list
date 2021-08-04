@@ -13,7 +13,7 @@ class Project extends Component {
 
   displayProject() {
     return (
-      <div>
+      <div key={this.props.i}>
         <p onClick={() => this.props.selectProject(this.state.name)}>{this.state.name}</p>
         <button onClick={() => this.editProjectName()}>Edit</button>
       </div>
@@ -22,10 +22,10 @@ class Project extends Component {
 
   displayEditProject() {
     return (
-      <div>
+      <div key={this.props.i}>
         <input type="text" value={this.state.name} onChange={e => this.setState({name: e.target.value})} />
         <button onClick={e => this.submitEditProjectName(e)}>Submit</button>
-        <button>Delete</button>
+        <button onClick={e => this.deleteProject(e)}>Delete</button>
       </div>
     );
   }
@@ -36,13 +36,27 @@ class Project extends Component {
     });
   }
 
-  submitEditProjectName() {
-    this.props.submitEditProjectName(this.state.name, this.state.oldName);
+  submitEditProjectName(e) {
+    const index = [...e.target.parentElement.parentElement.children].indexOf(e.target.parentElement);
+    this.props.submitEditProjectName(this.state.name, index);
 
     this.setState({
       oldName: this.state.name,
       editMode: false
     });
+  }
+
+  deleteProject(e) {
+    const index = [...e.target.parentElement.parentElement.children].indexOf(e.target.parentElement);
+    this.props.deleteProject(this.state.name, index);
+
+    setTimeout(() => {
+      this.setState({
+        oldName: this.props.name,
+        name: this.props.name,
+        editMode: false,
+      });
+    }, 0)
   }
 
   render() {

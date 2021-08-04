@@ -16,7 +16,7 @@ class Todo extends Component {
 
   displayTodo() {
     return (
-      <div className="todo-container" style={styles.todo}>
+      <div key={this.props.i} className="todo-container" style={styles.todo}>
         <p>{this.props.todo.title}</p>
         <p>{this.props.todo.description}</p>
         <p>{this.props.todo.dueDate}</p>
@@ -53,14 +53,21 @@ class Todo extends Component {
     const index = [...e.target.parentElement.parentElement.children].indexOf(e.target.parentElement);
     this.props.deleteTodo(index);
 
-    this.setState({
-      editMode: false,
-    });
+    setTimeout(() => {
+      this.setState({
+        title: this.props.todo.title,
+        description: this.props.todo.description,
+        dueDate: this.props.todo.dueDate,
+        priority: this.props.todo.priority,
+        notes: this.props.todo.notes,
+        editMode: false,
+      });
+    }, 0);
   }
 
   displayEditTodo() {
     return (
-      <div>
+      <div key={this.props.i}>
         <input type="text" value={this.state.title} onChange={e => this.updateInput('title', e.target.value)} />
         <input type="text" value={this.state.description} onChange={e => this.updateInput('description', e.target.value)} />
         <input type="text" value={this.state.dueDate} onChange={e => this.updateInput('dueDate', e.target.value)} />
